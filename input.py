@@ -37,5 +37,4 @@ for j in range(n):#separate input for each component
 				ar[j] = int(ar[j])
 		ar0.append(ar)
 	knot.inf.append(ar0) 
-print(knot.inf)
 
