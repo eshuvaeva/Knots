@@ -31,8 +31,6 @@ def reduce(a):
 
 # classes
 class Link:
-	def __init__(self, n):
-		self.n = n
 	def inf(self,ar):
 		self.inf = ar
 	def loop(self,comp,vertex):
@@ -94,7 +92,9 @@ class Link:
 		if len(le) == 4:
 			if check_loops(comp[vertex-1]) == True:
 				self.inf.append([])
-		del(comp[vertex-1])
+			if len(comp)>1:
+				self.inf.append([])
+		del(comp[vertex-1])	
 		return self
 	def one_smoothing(self,comp,vertex):
 		le = self.loop(comp,vertex)
@@ -145,6 +145,8 @@ class Link:
 				comp[neighbor2-1][n2_edge] = [neighbor1,n1_edge]
 		if len(le) == 4:
 			if check_loops(comp[vertex-1]) == False:
+				self.inf.append([])
+			if len(comp)>1:
 				self.inf.append([])
 		del(comp[vertex-1])
 		return self
@@ -209,37 +211,22 @@ def all_unknots(link):
 		return True
 
 def Kauffman(link):
-	if link.inf == []:
-		return (LaurentPolynomial(0,[1]).inf)
-	elif link.inf == [[]]:
-		return (LaurentPolynomial(-1,[1,0,1]).inf)
-	elif all_unknots(link) == True:
-		res = LaurentPolynomial(0,[1])
-		for i in range(len(link.inf)):
-			res = res*(LaurentPolynomial(-1,[1,0,1]))
-			print(res.inf)
+	if all_unknots(link) != True:
+		import copy
+		v = len(link.inf[0])-1
+		kn = Link()
+		kn.inf = copy.deepcopy(link.inf)
+		s0 = kn.zero_smoothing(kn.inf[0],v+1)
+		print(s0.inf)
+		return(s0)
 	else:
-		print(link.inf,"/")
-		c = link.inf[0]
-		ver = len(c)
-		for v in range(ver-1, -1, -1):
-			if c[v] == []:
-				del(c[v])
-				link.inf.append([])
-			else:
-				s0 = Kauffman(link.zero_smoothing(c,v+1))
-				s1 = Kauffman(link.one_smoothing(c,v+1))
-				if comp[v][0] == '+':
-				 	k = s1 - LaurentPolynomial(1,[1])*s0
-				 	print(k.inf)
-				if comp[v][0] == '-':
-					k = s0 - LaurentPolynomial(1,[1])*s1
-					print(k.inf)
+		print("all_unknots!")
+
 
 
 # input
 n = int(input())# число несвязанных между собой компонент
-knot = Link(n)
+knot = Link()
 knot.inf = []
 for j in range(n):#отдельно вводим данные для каждой компоненты
 	m=int(input())#для каждой компоненты вводим число вершин в ней
@@ -254,9 +241,15 @@ for j in range(n):#отдельно вводим данные для каждо�
 			vertex_inf.append(edge)
 		ar0.append(vertex_inf)
 	knot.inf.append(ar0)
-Kauffman(knot)
+print(knot.inf)
+def print_0(knot):
+	a = knot
+	n = len(knot.inf[0])
+	while n > 0:
+		a = Kauffman(a)
+		n = n-1
+print_0(knot)
+#Kauffman(Kauffman(Kauffman(knot)))
 # for c in knot.inf:
 # 	for v in range(len(c)):
 # 		knot.one_smoothing(c,v)
-print(knot.inf)
-
