@@ -14,16 +14,15 @@ def check_loops(ar):
 		return False
 # for polynomial multiplication
 def reduce(a):
-	from operator import itemgetter
-	ar = sorted(a, key=itemgetter(1))
 	powers=[]
 	norm = []
-	for t in ar:
+	for t in a:
 		powers.append(t[1])
 	powers = set(powers)
-	for h in powers:
+	ps =sorted(powers)
+	for h in ps:
 		k = 0
-		for t in ar:
+		for t in a:
 			if t[1] == h:
 				k = k + t[0]
 		norm.append([k,h])
