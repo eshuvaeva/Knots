@@ -14,16 +14,15 @@ def check_loops(ar):
 		return False
 # for polynomial multiplication
 def reduce(a):
-	from operator import itemgetter
-	ar = sorted(a, key=itemgetter(1))
 	powers=[]
 	norm = []
-	for t in ar:
+	for t in a:
 		powers.append(t[1])
 	powers = set(powers)
-	for h in powers:
+	ps =sorted(powers)
+	for h in ps:
 		k = 0
-		for t in ar:
+		for t in a:
 			if t[1] == h:
 				k = k + t[0]
 		norm.append([k,h])
@@ -200,6 +199,11 @@ class LaurentPolynomial():
 		min_power = norm[0][1]
 		new_p = LaurentPolynomial(min_power,new_coeff)
 		return(new_p)
+	def __pow__(self,n):
+		new_p = LaurentPolynomial(0,[1])
+		for j in range(n):
+			new_p = new_p * self
+		return new_p
 def all_unknots(link):
 	c = 0
 	for k in link.inf:
@@ -211,20 +215,34 @@ def all_unknots(link):
 		return True
 
 def Kauffman(link):
-	if all_unknots(link) != True:
-		import copy
-		v = len(link.inf[0])-1
-		kn = Link()
-		kn.inf = copy.deepcopy(link.inf)
-		s0 = kn.zero_smoothing(kn.inf[0],v+1)
-		print(s0.inf)
-		return(s0)
+	import copy
+	if len(link.inf) == 0:
+		print(LaurentPolynomial(0,[1]).inf)
+		return LaurentPolynomial(0,[1])
 	else:
-		print("all_unknots!")
-
-
-
-# input
+		n = len(link.inf[0])
+		if n == 0:
+			p0 = LaurentPolynomial(-1,[1,0,1])
+			p = p0**len(link.inf)
+			print(len(link.inf))
+			return p
+		else:
+			while n >= 0:
+				kn0 = Link()
+				kn0.inf=copy.deepcopy(link.inf)
+				kn1 = Link()
+				kn1.inf=copy.deepcopy(link.inf)
+				v = len(kn0.inf[0])
+				kn0.zero_smoothing(kn0.inf[0],v)
+				kn1.one_smoothing(kn1.inf[0],v)
+				# print(kn0.inf)
+				# print(kn1.inf)
+				print(Kauffman(kn0).inf)
+				if link.inf[0][n-1][0] == '+':
+					return(Kauffman(kn1)-LaurentPolynomial(1,[1])*Kauffman(kn0))
+				if link.inf[0][n-1][0] == '-':
+					return(Kauffman(kn0)-LaurentPolynomial(1,[1])*Kauffman(kn1))
+				n = n-1
 n = int(input())# число несвязанных между собой компонент
 knot = Link()
 knot.inf = []
@@ -242,14 +260,4 @@ for j in range(n):#отдельно вводим данные для каждо�
 		ar0.append(vertex_inf)
 	knot.inf.append(ar0)
 print(knot.inf)
-def print_0(knot):
-	a = knot
-	n = len(knot.inf[0])
-	while n > 0:
-		a = Kauffman(a)
-		n = n-1
-print_0(knot)
-#Kauffman(Kauffman(Kauffman(knot)))
-# for c in knot.inf:
-# 	for v in range(len(c)):
-# 		knot.one_smoothing(c,v)
+Kauffman(knot)
