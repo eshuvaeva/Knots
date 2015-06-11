@@ -69,7 +69,10 @@ class Link:
 		if len(le) == 4:
 			if check_loops(comp[vertex-1]) == True:
 				self.inf.append([])
+			if len(comp)>1:
+				self.inf.append([])
 		del(comp[vertex-1])
+		return self
 	def one_smoothing(self,comp,vertex):
 		le = self.loop(comp,vertex)
 		if len(le) == 0:
@@ -119,7 +122,10 @@ class Link:
 		if len(le) == 4:
 			if check_loops(comp[vertex-1]) == False:
 				self.inf.append([])
+			if len(comp)>1:
+				self.inf.append([])
 		del(comp[vertex-1])
+		return self
 
 
 n = int(input())# число несвязанных между собой компонент
