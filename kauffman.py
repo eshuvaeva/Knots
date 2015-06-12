@@ -45,10 +45,6 @@ class Link:
 			n1_edge = comp[vertex-1][1][1]
 			neighbor2 = comp[vertex-1][2][0]
 			n2_edge = comp[vertex-1][2][1]
-			# print(comp)
-			# print(neighbor1)
-			# print(comp[neighbor1-1])
-			# print(n1_edge)
 			comp[neighbor1-1][n1_edge] = [neighbor2,n2_edge]
 			comp[neighbor2-1][n2_edge] = [neighbor1,n1_edge]
 			neighbor3 = comp[vertex-1][3][0]
@@ -235,28 +231,14 @@ def Kauffman(link):
 				v = len(kn0.inf[0])
 				kn0.zero_smoothing(kn0.inf[0],v)
 				kn1.one_smoothing(kn1.inf[0],v)
-				print(kn0.inf)
-				print(kn1.inf)
-				if Kauffman(kn0) is not None:
-					print(Kauffman(kn0).inf)
-				else:
-					print("oops!")
-				if Kauffman(kn1) is not None:
-					#print(Kauffman(kn1))
-					print(Kauffman(kn1).inf)
-				else:  
-					print("oops!")
 				q = LaurentPolynomial(1,[-1])
-				pol = Kauffman(kn0)+q*Kauffman(kn1)
-				# print(kn0.inf)
-				# print(kn1.inf)
-				# if link.inf[0][n-1][0] == '+':
-				# 	return(Kauffman(kn1)-LaurentPolynomial(1,[1])*Kauffman(kn0))
-				# if link.inf[0][n-1][0] == '-':
-				# 	return(Kauffman(kn0)-LaurentPolynomial(1,[1])*Kauffman(kn1))
+				if link.inf[0][v-1][0][0] == '-':
+					pol = Kauffman(kn0)+q*Kauffman(kn1)
+				if link.inf[0][v-1][0][0] == '+':
+					pol = Kauffman(kn1)+q*Kauffman(kn0)
 				n = n-1
-				print(pol.inf)
-				return pol
+			return pol
+
 n = int(input())# число несвязанных между собой компонент
 knot = Link()
 knot.inf = []
@@ -274,4 +256,4 @@ for j in range(n):#отдельно вводим данные для каждо�
 		ar0.append(vertex_inf)
 	knot.inf.append(ar0)
 print(knot.inf)
-Kauffman(knot)
+print(Kauffman(knot).inf)
