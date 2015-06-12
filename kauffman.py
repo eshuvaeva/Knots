@@ -224,10 +224,10 @@ def Kauffman(link):
 		if n == 0:
 			p0 = LaurentPolynomial(-1,[1,0,1])
 			p = p0**len(link.inf)
-			print(len(link.inf))
+			#print(len(link.inf))
 			return p
 		else:
-			while n >= 0:
+			while n > 0:
 				kn0 = Link()
 				kn0.inf=copy.deepcopy(link.inf)
 				kn1 = Link()
@@ -235,14 +235,28 @@ def Kauffman(link):
 				v = len(kn0.inf[0])
 				kn0.zero_smoothing(kn0.inf[0],v)
 				kn1.one_smoothing(kn1.inf[0],v)
+				print(kn0.inf)
+				print(kn1.inf)
+				if Kauffman(kn0) is not None:
+					print(Kauffman(kn0).inf)
+				else:
+					print("oops!")
+				if Kauffman(kn1) is not None:
+					#print(Kauffman(kn1))
+					print(Kauffman(kn1).inf)
+				else:  
+					print("oops!")
+				q = LaurentPolynomial(1,[-1])
+				pol = Kauffman(kn0)+q*Kauffman(kn1)
 				# print(kn0.inf)
 				# print(kn1.inf)
-				print(Kauffman(kn0).inf)
-				if link.inf[0][n-1][0] == '+':
-					return(Kauffman(kn1)-LaurentPolynomial(1,[1])*Kauffman(kn0))
-				if link.inf[0][n-1][0] == '-':
-					return(Kauffman(kn0)-LaurentPolynomial(1,[1])*Kauffman(kn1))
+				# if link.inf[0][n-1][0] == '+':
+				# 	return(Kauffman(kn1)-LaurentPolynomial(1,[1])*Kauffman(kn0))
+				# if link.inf[0][n-1][0] == '-':
+				# 	return(Kauffman(kn0)-LaurentPolynomial(1,[1])*Kauffman(kn1))
 				n = n-1
+				print(pol.inf)
+				return pol
 n = int(input())# число несвязанных между собой компонент
 knot = Link()
 knot.inf = []
