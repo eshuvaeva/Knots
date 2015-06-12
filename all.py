@@ -30,8 +30,6 @@ def reduce(a):
 
 # classes
 class Link:
-	def __init__(self, n):
-		self.n = n
 	def inf(self,ar):
 		self.inf = ar
 	def loop(self,comp,vertex):
@@ -47,6 +45,10 @@ class Link:
 			n1_edge = comp[vertex-1][1][1]
 			neighbor2 = comp[vertex-1][2][0]
 			n2_edge = comp[vertex-1][2][1]
+			# print(comp)
+			# print(neighbor1)
+			# print(comp[neighbor1-1])
+			# print(n1_edge)
 			comp[neighbor1-1][n1_edge] = [neighbor2,n2_edge]
 			comp[neighbor2-1][n2_edge] = [neighbor1,n1_edge]
 			neighbor3 = comp[vertex-1][3][0]
@@ -91,7 +93,7 @@ class Link:
 				self.inf.append([])
 			if len(comp)>1:
 				self.inf.append([])
-		del(comp[vertex-1])
+		del(comp[vertex-1])	
 		return self
 	def one_smoothing(self,comp,vertex):
 		le = self.loop(comp,vertex)
@@ -131,6 +133,7 @@ class Link:
 				neighbor4 = comp[vertex-1][4][0]
 				n4_edge = comp[vertex-1][4][1]
 				comp[neighbor3-1][n3_edge] = [neighbor4,n4_edge]
+				
 				comp[neighbor4-1][n4_edge] = [neighbor3,n3_edge]
 			if le == [3,4]:
 				neighbor1 = comp[vertex-1][1][0]
@@ -146,6 +149,18 @@ class Link:
 				self.inf.append([])
 		del(comp[vertex-1])
 		return self
+	def count_right(self):
+		r =0
+		for i in range(len(self.inf[0])):
+			if  self.inf[0][i][0][1] == "r":
+				r = r+1
+		return r
+	def count_left(self):
+		l =0
+		for i in range(len(self.inf[0])):
+			if  self.inf[0][i][0][1] == "l":
+				l = l+1
+		return l
 
 class LaurentPolynomial():
 	def __init__(self,min_power,coeff):
@@ -196,10 +211,72 @@ class LaurentPolynomial():
 		min_power = norm[0][1]
 		new_p = LaurentPolynomial(min_power,new_coeff)
 		return(new_p)
+	def __pow__(self,n):
+		new_p = LaurentPolynomial(0,[1])
+		for j in range(n):
+			new_p = new_p * self
+		return new_p
+def all_unknots(link):
+	c = 0
+	for k in link.inf:
+		if k != []:
+			c = c+1
+	if c>0:
+		return False
+	else:
+		return True
 
-# input
+def Kauffman(link):
+	import copy
+	if len(link.inf) == 0:
+		print(LaurentPolynomial(0,[1]).inf)
+		return LaurentPolynomial(0,[1])
+	else:
+		n = len(link.inf[0])
+		if n == 0:
+			p0 = LaurentPolynomial(-1,[1,0,1])
+			p = p0**len(link.inf)
+			#print(len(link.inf))
+			return p
+		else:
+			while n > 0:
+				kn0 = Link()
+				kn0.inf=copy.deepcopy(link.inf)
+				kn1 = Link()
+				kn1.inf=copy.deepcopy(link.inf)
+				v = len(kn0.inf[0])
+				kn0.zero_smoothing(kn0.inf[0],v)
+				kn1.one_smoothing(kn1.inf[0],v)
+				# print(kn0.inf)
+				# print(kn1.inf)
+				# if Kauffman(kn0) is not None:
+				# print(Kauffman(kn0).inf)
+				# else:
+				# 	print("oops!")
+				# if Kauffman(kn1) is not None:
+					#print(Kauffman(kn1))
+				# print(Kauffman(kn1).inf)
+				# else:  
+				# 	print("oops!")
+				q = LaurentPolynomial(1,[-1])
+				if link.inf[0][v-1][0][0] == '-':
+					pol = Kauffman(kn0)+q*Kauffman(kn1)
+				if link.inf[0][v-1][0][0] == '+':
+					pol = Kauffman(kn1)+q*Kauffman(kn0)
+				n = n-1
+			# print(pol.inf)
+			return pol
+def Jones(link):
+	k = Kauffman(link)
+	r = knot.count_right()
+	l = knot.count_left()
+	koe = LaurentPolynomial(0,[-1])**l
+	pol1 = LaurentPolynomial(r-2*l,[1])
+	jo = koe*pol1*Kauffman(link)
+	return jo
+
 n = int(input())# число несвязанных между собой компонент
-knot = Link(n)
+knot = Link()
 knot.inf = []
 for j in range(n):#отдельно вводим данные для каждой компоненты
 	m=int(input())#для каждой компоненты вводим число вершин в ней
@@ -214,5 +291,5 @@ for j in range(n):#отдельно вводим данные для каждо�
 			vertex_inf.append(edge)
 		ar0.append(vertex_inf)
 	knot.inf.append(ar0)
-knot.one_smoothing(knot.inf[0],1)
 print(knot.inf)
+print(Jones(knot).inf)
