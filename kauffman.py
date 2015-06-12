@@ -213,14 +213,12 @@ def all_unknots(link):
 def Kauffman(link):
 	import copy
 	if len(link.inf) == 0:
-		print(LaurentPolynomial(0,[1]).inf)
 		return LaurentPolynomial(0,[1])
 	else:
 		n = len(link.inf[0])
 		if n == 0:
 			p0 = LaurentPolynomial(-1,[1,0,1])
 			p = p0**len(link.inf)
-			#print(len(link.inf))
 			return p
 		else:
 			while n > 0:
