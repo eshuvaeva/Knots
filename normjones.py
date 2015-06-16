@@ -1,3 +1,4 @@
+
 #supporting functions
 #for input
 def is_int(str):
@@ -245,32 +246,18 @@ def Kauffman(link):
 			#print(len(link.inf))
 			return p
 		else:
-			while n > 0:
-				kn0 = Link()
-				kn0.inf=copy.deepcopy(link.inf)
-				kn1 = Link()
-				kn1.inf=copy.deepcopy(link.inf)
-				v = len(kn0.inf[0])
-				kn0.zero_smoothing(kn0.inf[0],v)
-				kn1.one_smoothing(kn1.inf[0],v)
-				# print(kn0.inf)
-				# print(kn1.inf)
-				# if Kauffman(kn0) is not None:
-				# print(Kauffman(kn0).inf)
-				# else:
-				# 	print("oops!")
-				# if Kauffman(kn1) is not None:
-					#print(Kauffman(kn1))
-				# print(Kauffman(kn1).inf)
-				# else:  
-				# 	print("oops!")
-				q = LaurentPolynomial(1,[-1])
-				if link.inf[0][v-1][0][0] == '-':
-					pol = Kauffman(kn0)+q*Kauffman(kn1)
-				if link.inf[0][v-1][0][0] == '+':
-					pol = Kauffman(kn1)+q*Kauffman(kn0)
-				n = n-1
-			# print(pol.inf)
+			kn0 = Link()
+			kn0.inf=copy.deepcopy(link.inf)
+			kn1 = Link()
+			kn1.inf=copy.deepcopy(link.inf)
+			v = len(kn0.inf[0])
+			kn0.zero_smoothing(kn0.inf[0],v)
+			kn1.one_smoothing(kn1.inf[0],v)
+			q = LaurentPolynomial(1,[-1])
+			if link.inf[0][v-1][0][0] == '-':
+				pol = Kauffman(kn0)+q*Kauffman(kn1)
+			if link.inf[0][v-1][0][0] == '+':
+				pol = Kauffman(kn1)+q*Kauffman(kn0)
 			return pol
 def Jones(link):
 	k = Kauffman(link)
