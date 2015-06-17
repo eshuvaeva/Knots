@@ -33,14 +33,15 @@ def reduce(a):
 class Link:
 	def inf(self,ar):
 		self.inf = ar
-	def loop(self,comp,vertex):
+	def loop(self,vertex):
 		loop_edges = []
-		for i in range(len(comp[vertex-1])):
-			if comp[vertex-1][i][0] == vertex:
+		for i in range(len(self.inf[0][vertex-1])):
+			if self.inf[0][vertex-1][i][0] == vertex:
 				loop_edges.append(i)
 		return(loop_edges)
-	def zero_smoothing(self,comp,vertex):
-		le = self.loop(comp,vertex)
+	def zero_smoothing(self,vertex):
+		comp = self.inf[0]
+		le = self.loop(vertex)
 		if len(le) == 0:
 			neighbor1 = comp[vertex-1][1][0]
 			n1_edge = comp[vertex-1][1][1]
@@ -96,8 +97,9 @@ class Link:
 				self.inf.append([])
 		del(comp[vertex-1])	
 		return self
-	def one_smoothing(self,comp,vertex):
-		le = self.loop(comp,vertex)
+	def one_smoothing(self,vertex):
+		comp = self.inf[0]
+		le = self.loop(vertex)
 		if len(le) == 0:
 			neighbor1 = comp[vertex-1][1][0]
 			n1_edge = comp[vertex-1][1][1]
@@ -262,7 +264,6 @@ def all_unknots(link):
 def Kauffman(link):
 	import copy
 	if len(link.inf) == 0:
-		print(LaurentPolynomial(0,[1]).inf)
 		return LaurentPolynomial(0,[1])
 	else:
 		n = len(link.inf[0])
@@ -276,8 +277,8 @@ def Kauffman(link):
 			kn1 = Link()
 			kn1.inf=copy.deepcopy(link.inf)
 			v = len(kn0.inf[0])
-			kn0.zero_smoothing(kn0.inf[0],v)
-			kn1.one_smoothing(kn1.inf[0],v)
+			kn0.zero_smoothing(v)
+			kn1.one_smoothing(v)
 			q = LaurentPolynomial(1,[-1])
 			if link.inf[0][v-1][0][0] == '-':
 				pol = Kauffman(kn0)+q*Kauffman(kn1)
