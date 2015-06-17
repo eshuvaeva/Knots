@@ -1,3 +1,4 @@
+
 #supporting functions
 #for input
 def is_int(str):
@@ -216,6 +217,38 @@ class LaurentPolynomial():
 		for j in range(n):
 			new_p = new_p * self
 		return new_p
+	def printing(self):
+		st_poly = " "
+		po = self.inf[0]
+		coeff = self.inf[1:]
+		for i in range(len(coeff)):
+			if i+po == 0:
+				if coeff[i]>0:
+					st_poly = st_poly + " + " + str(coeff[i])
+				if coeff[i]<0:
+					st_poly = st_poly +" - " + str((abs(coeff[i])))
+			# elif i + po == 1:
+			# 	if coeff[i]>0:
+			# 		st_poly = st_poly + " + " + str(coeff[i]) + "q"
+			# 	if coeff[i]<0:
+			# 		st_poly = st_poly +" - " + str((abs(coeff[i]))) + "q"
+
+			else:
+				if coeff[i] == 1:
+					st_poly = st_poly + " + q^"+str(i+po)
+				if coeff[i] == -1:
+					st_poly = st_poly + " - q^"+str(i+po)
+				if coeff[i] > 0 and coeff[i] != 1:
+					st_poly = st_poly +" + "+ str(coeff[i]) + "q^"+str(i+po)
+				if coeff[i] < 0 and coeff[i] != -1:
+					st_poly = st_poly +" - " + str((abs(coeff[i]))) + "q^"+str(i+po)
+		print(st_poly)
+	def normal_division(self):
+		coeff = self.inf[1:]
+		for i in range(2,len(coeff),1):
+			coeff[i] = coeff[i]-coeff[i-2]
+		pol = LaurentPolynomial(self.inf[0]+1,coeff)
+		return(pol)
 def all_unknots(link):
 	c = 0
 	for k in link.inf:
@@ -236,35 +269,20 @@ def Kauffman(link):
 		if n == 0:
 			p0 = LaurentPolynomial(-1,[1,0,1])
 			p = p0**len(link.inf)
-			#print(len(link.inf))
 			return p
 		else:
-			while n > 0:
-				kn0 = Link()
-				kn0.inf=copy.deepcopy(link.inf)
-				kn1 = Link()
-				kn1.inf=copy.deepcopy(link.inf)
-				v = len(kn0.inf[0])
-				kn0.zero_smoothing(kn0.inf[0],v)
-				kn1.one_smoothing(kn1.inf[0],v)
-				# print(kn0.inf)
-				# print(kn1.inf)
-				# if Kauffman(kn0) is not None:
-				# print(Kauffman(kn0).inf)
-				# else:
-				# 	print("oops!")
-				# if Kauffman(kn1) is not None:
-					#print(Kauffman(kn1))
-				# print(Kauffman(kn1).inf)
-				# else:  
-				# 	print("oops!")
-				q = LaurentPolynomial(1,[-1])
-				if link.inf[0][v-1][0][0] == '-':
-					pol = Kauffman(kn0)+q*Kauffman(kn1)
-				if link.inf[0][v-1][0][0] == '+':
-					pol = Kauffman(kn1)+q*Kauffman(kn0)
-				n = n-1
-			# print(pol.inf)
+			kn0 = Link()
+			kn0.inf=copy.deepcopy(link.inf)
+			kn1 = Link()
+			kn1.inf=copy.deepcopy(link.inf)
+			v = len(kn0.inf[0])
+			kn0.zero_smoothing(kn0.inf[0],v)
+			kn1.one_smoothing(kn1.inf[0],v)
+			q = LaurentPolynomial(1,[-1])
+			if link.inf[0][v-1][0][0] == '-':
+				pol = Kauffman(kn0)+q*Kauffman(kn1)
+			if link.inf[0][v-1][0][0] == '+':
+				pol = Kauffman(kn1)+q*Kauffman(kn0)
 			return pol
 def Jones(link):
 	k = Kauffman(link)
@@ -275,21 +293,29 @@ def Jones(link):
 	jo = koe*pol1*Kauffman(link)
 	return jo
 
-n = int(input())# число несвязанных между собой компонент
+
+n = int(input())
+m = int(input())
 knot = Link()
-knot.inf = []
-for j in range(n):#отдельно вводим данные для каждой компоненты
-	m=int(input())#для каждой компоненты вводим число вершин в ней
-	ar0 =[]
-	for i in range(m):
-		vertex_inf = []
-		for j in range(5):
-			edge = list(map(str,input().split()))
-			for t in range(len(edge)):
-				if is_int(edge[t]) == True:#переводим номера вершин-соседей в integer
-					edge[t] = int(edge[t])
-			vertex_inf.append(edge)
-		ar0.append(vertex_inf)
-	knot.inf.append(ar0)
+knot.inf = [[]]
+for j in range(n):
+	ar = []
+	for i in range(5):
+		edge = list(map(str,input().split()))
+		for t in range(len(edge)):
+			if is_int(edge[t]) == True:#переводим номера вершин-соседей в integer
+				edge[t] = int(edge[t])
+		ar.append(edge)
+	knot.inf[0].append(ar)
+if n == 0:
+	for h in range(m-1):
+		knot.inf.append([])
+else:
+	for h in range(m):
+		knot.inf.append([])
 print(knot.inf)
-print(Jones(knot).inf)
+print(Kauffman(knot).inf)
+Kauffman(knot).printing()
+j = Jones(knot)
+print(j.normal_division().inf)
+j.normal_division().printing()
