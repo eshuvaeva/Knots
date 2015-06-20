@@ -303,7 +303,6 @@ class LaurentPolynomial():
 def Kauffman(link):
 	import copy
 	if len(link.inf) == 0:#empty set
-		print(LaurentPolynomial(0,[1]).inf)
 		return LaurentPolynomial(0,[1])
 	else:
 		n = len(link.inf[0])
@@ -369,10 +368,14 @@ try:
 			for h in range(m):
 				knot.inf.append([])
 		print("Kauffman bracket:")
-		Kauffman(knot).printing()
-		j = Jones(knot)
-		print("Jones polynomial:")
-		j.normal_division().printing()
+		if n == 0 and m == 0:
+			print(" 1")
+			print("That is an empty set.")
+		else:
+			Kauffman(knot).printing()
+			j = Jones(knot)
+			print("Jones polynomial:")
+			j.normal_division().printing()
 	except :
 		print(" Could not calculate. An error occured. Change your data and try again.")
 except IOError:
