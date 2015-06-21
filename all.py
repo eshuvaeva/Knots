@@ -335,48 +335,54 @@ def Jones(link):
 	pol1 = LaurentPolynomial(r-2*l,[1])
 	jo = koe*pol1*Kauffman(link)
 	return jo
-try:
-	array = []
-	f_read = open(input(), 'r')#a file is opened
-	for line in f_read.readlines():
-		line = line.strip()
-		array.append(line)
-	f_read.close()
-	try:
-		n = int(array[0])#number of vertices is defined
-		m = int(array[1])#number of disconnected unknots is defined
-		del(array[0])
-		del(array[0])
-		knot = Link()
-		knot.inf = [[]]
-		ar1 = []
-		for el in array:
-			el1 = list(el.split())
-			ar1.append(el1)
-		for j in range(n):#vertex characterization
-			ar = ar1[:5]
-			for e in ar:
-				for t in range(len(e)):
-					if is_int(e[t]) == True:
-						e[t] = int(e[t])#converting into numbers from strings
-			ar1 = ar1[5:]
-			knot.inf[0].append(ar)
-		if n == 0:
-			for h in range(m-1):
-				knot.inf.append([])
-		else:
-			for h in range(m):
-				knot.inf.append([])
-		print("Kauffman bracket:")
-		if n == 0 and m == 0:
-			print(" 1")
-			print("That is an empty set.")
-		else:
-			Kauffman(knot).printing()
-			j = Jones(knot)
-			print("Jones polynomial:")
-			j.normal_division().printing()
-	except :
-		print(" Could not calculate. An error occured. Change your data and try again.")
-except IOError:
-	print("No such file. Try again.")
+while True:
+	f = input()
+	if f == "stop":
+		break
+	else:
+		try:
+			array = []
+			f_read = open(f, 'r')#a file is opened
+			for line in f_read.readlines():
+				line = line.strip()
+				array.append(line)
+			f_read.close()
+			try:
+				n = int(array[0])#number of vertices is defined
+				m = int(array[1])#number of disconnected unknots is defined
+				del(array[0])
+				del(array[0])
+				knot = Link()
+				knot.inf = [[]]
+				ar1 = []
+				for el in array:
+					el1 = list(el.split())
+					ar1.append(el1)
+				for j in range(n):#vertex characterization
+					ar = ar1[:5]
+					for e in ar:
+						for t in range(len(e)):
+							if is_int(e[t]) == True:
+								e[t] = int(e[t])#converting into numbers from strings
+					ar1 = ar1[5:]
+					knot.inf[0].append(ar)
+				if n == 0:
+					for h in range(m-1):
+						knot.inf.append([])
+				else:
+					for h in range(m):
+						knot.inf.append([])
+				print("Kauffman bracket:")
+				if n == 0 and m == 0:
+					print(" 1")
+					print("That is an empty set.")
+				else:
+					Kauffman(knot).printing()
+					j = Jones(knot)
+					print("Jones polynomial:")
+					j.normal_division().printing()
+			except :
+				print(" Could not calculate. An error occured. Change your data and try again.")
+				pass
+		except IOError:
+			print("No such file. Try again.")
